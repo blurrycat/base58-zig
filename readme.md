@@ -15,73 +15,27 @@
 
 _base58-zig_ is encoder/decoder library written in Zig.
 
-## Installation
+## Usage
 
-### Manual
+Add the package to your `build.zig.zon`:
+```
+zig fetch --save git+https://github.com/blurrycat/base58-zig
+```
 
-1. Declare Base58-zig as a dependency in `build.zig.zon`:
+Then you can add the library as a dependency in your `build.zig`:
+```zig
+const base58_dep = b.dependency("base58", .{
+    .target = target,
+    .optimize = optimize,
+});
+your_module.addImport("base58", base58_dep.module("base58"));
+your_compile_step.linkLibrary(base58_dep.artifact("base58"));
+```
 
-   ```diff
-   .{
-       .name = "my-project",
-       .version = "1.0.0",
-       .dependencies = .{
-   +       .@"base58-zig" = .{
-   +           .url = "https://github.com/ultd/base58-zig/archive/<COMMIT>.tar.gz",
-   +       },
-       },
-   }
-   ```
-
-2. Expose Base58-zig as a module in `build.zig`:
-
-   ```diff
-   const std = @import("std");
-
-   pub fn build(b: *std.Build) void {
-       const target = b.standardTargetOptions(.{});
-       const optimize = b.standardOptimizeOption(.{});
-
-   +   const opts = .{ .target = target, .optimize = optimize };
-   +   const base58_module = b.dependency("base58-zig", opts).module("base58-zig");
-
-       const exe = b.addExecutable(.{
-           .name = "test",
-           .root_source_file = .{ .path = "src/main.zig" },
-           .target = target,
-           .optimize = optimize,
-       });
-   +   exe.addModule("base58-zig", base58_module);
-       exe.install();
-
-       ...
-   }
-   ```
-
-3. Obtain Base58-zig's package hash:
-
-   ```
-   $ zig build
-   my-project/build.zig.zon:6:20: error: url field is missing corresponding hash field
-           .url = "https://github.com/ultd/base58-zig/archive/<COMMIT>.tar.gz",
-                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   note: expected .hash = "<HASH>",
-   ```
-
-4. Update `build.zig.zon` with hash value:
-
-   ```diff
-   .{
-       .name = "my-project",
-       .version = "1.0.0",
-       .dependencies = .{
-           .@"base58-zig" = .{
-               .url = "https://github.com/ultd/base58-zig/archive/<COMMIT>.tar.gz",
-   +           .hash = "<HASH>",
-           },
-       },
-   }
-   ```
+You can then import `base58` in your code:
+```zig
+const base58 = @import("base58");
+```
 
 ### API Reference
 
@@ -92,7 +46,7 @@ _base58-zig_ is encoder/decoder library written in Zig.
 
 ```zig
 const std = @import("std");
-const base58 = @import("base58-zig");
+const base58 = @import("base58");
 
 const allocator = std.heap.page_allocator;
 
@@ -120,7 +74,7 @@ The `dest` buffer written to needs to be properly sized. Base58 encoding is a va
 
 ```zig
 const std = @import("std");
-const base58 = @import("base58-zig");
+const base58 = @import("base58");
 
 const allocator = std.heap.page_allocator;
 
@@ -151,7 +105,7 @@ pub fn main() !void {
 
 ```zig
 const std = @import("std");
-const base58 = @import("base58-zig");
+const base58 = @import("base58");
 
 const allocator = std.heap.page_allocator;
 
@@ -179,7 +133,7 @@ The `dest` buffer written to needs to be properly sized. Base58 encoding is a va
 
 ```zig
 const std = @import("std");
-const base58 = @import("base58-zig");
+const base58 = @import("base58");
 
 const allocator = std.heap.page_allocator;
 
@@ -210,7 +164,7 @@ pub fn main() !void {
 
 ```zig
 const std = @import("std");
-const base58 = @import("base58-zig");
+const base58 = @import("base58");
 
 const allocator = std.heap.page_allocator;
 
