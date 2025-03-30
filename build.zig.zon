@@ -1,0 +1,12 @@
+.{
+    .name = .base58,
+    .fingerprint = 0xed092d9eed557094,
+    .version = "0.2.0",
+    .paths = .{
+        "src/",
+        "build.zig",
+        "build.zig.zon",
+        "README.md",
+        "LICENSE",
+    },
+}

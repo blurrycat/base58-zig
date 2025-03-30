@@ -154,8 +154,27 @@ test "should encode and decode appropriately " {
     }
 }
 
+// This doesn't work on macOS yet :'(
+test "fuzz round-trip" {
+    const Context = struct {
+        fn testOne(context: @This(), input: []const u8) anyerror!void {
+            _ = context;
+            const encoder = Encoder.init(.{});
+            const decoder = Decoder.init(.{});
+
+            const encoded = try encoder.encodeAlloc(testing.allocator, input);
+            defer testing.allocator.free(encoded);
+            const decoded = try decoder.decodeAlloc(testing.allocator, encoded);
+            defer testing.allocator.free(decoded);
+
+            try testing.expectEqualSlices(u8, input, decoded);
+        }
+    };
+    try std.testing.fuzz(Context{}, Context.testOne, .{});
+}
+
 fn generateRandomByteSlice(allocator: std.mem.Allocator, seed: usize, maxLength: usize) ![]u8 {
-    var rng = std.rand.DefaultPrng.init(@intCast(std.time.timestamp() * @as(i64, @intCast(seed))));
+    var rng = std.Random.DefaultPrng.init(@intCast(std.time.timestamp() * @as(i64, @intCast(seed))));
     const length = rng.random().uintAtMost(usize, maxLength);
     const slice = try allocator.alloc(u8, length);
     rng.random().bytes(slice);
